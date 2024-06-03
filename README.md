@@ -1,43 +1,107 @@
-# Supersub
+# Supersub SDK
 
-Supersub is a subscription platform powered by Alchemy's account abstraction infrastructure and Chainlink's Cross-Chain Interoperability Protocol (CCIP). It allows service providers to create and manage subscription products, plans, and accept payments from users across multiple blockchain networks.
+Welcome to the Supersub SDK documentation. Supersub is a cross-chain crypto subscription platform powered by Alchemy's account abstraction infrastructure and Chainlink's Cross-Chain Interoperability Protocol. This SDK allows you to seamlessly integrate crypto-based subscriptions into your React applications.
 
-## Project Structure
+## Demo
 
-This repository is a monorepo containing the following submodules:
+![Demo](shot.png?raw=true "Demo Image")
 
-### 1. supersub-contracts
+## Installation
 
-This submodule contains the core smart contracts for Supersub, including the Subscription Plugin and Cross-Chain Bridge contracts. For more details, refer to the [supersub-contracts README](supersub-contracts/README.md).
+Install the Supersub SDK using npm:
 
-### 2. supersub-server
+```bash
+npm install supersub
+```
 
-The server component of Supersub handles user authentication, subscription management, and interaction with the smart contracts. It is built using Node.js, Express.js, and Prisma ORM. For more information, refer to the [supersub-server README](supersub-server/README.md).
+Or using yarn:
 
-### 3. supersub-ui
+```bash
+yarn add supersub
+```
 
-This submodule houses the user interface for Supersub, built with React and Typescript. It provides a user-friendly way for service providers to manage their products and subscriptions, and for users to subscribe to services. For more details, refer to the [supersub-ui README](supersub-ui/README.md).
+## Setup
+
+To integrate the Supersub SDK into your React application, follow these steps:
+
+### 1. Wrap your application with `SuperSubProvider`
+
+In your main entry file (usually `index.tsx`), import and set up the `SuperSubProvider` around your application component. This enables all child components to access the Supersub functionality via React context.
+
+```tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import { SuperSubProvider } from "supersub";
+
+const root = ReactDOM.createRoot(document.getElementById("root")!);
+root.render(
+  <React.StrictMode>
+    <SuperSubProvider>
+      <App />
+    </SuperSubProvider>
+  </React.StrictMode>
+);
+```
+
+### 2. Use the `useSuperSub` hook
+
+In your components, utilize the `useSuperSub` hook to access the `openSubscription` method. This method triggers the subscription process.
+
+```tsx
+import { useSuperMeta } from "supersub";
+
+function App() {
+  const { openSubscription } = useSuperSub();
+
+  return (
+    <>
+      <h1>Supersub Subscription Demo</h1>
+      <div className="card">
+        <button
+          onClick={() =>
+            openSubscription({
+              productId: 10,
+              defaultPlanId: 13,
+              apiKey: "pk_your_api_key_here",
+            })
+          }
+        >
+          Pay with Supersub
+        </button>
+      </div>
+    </>
+  );
+}
+
+export default App;
+```
+
+## Configuration
+
+Replace the `apiKey`, `productId`, and `defaultPlanId` with your actual product and plan identifiers and your Supersub API key to configure the subscription settings.
 
 ## Contributing
 
-We believe in the power of collaboration and welcome contributions from all members of the community irrespective of your domain knowledge and level of expertise,
-your input is valuable.
-Here are a few ways you can get involved:
+1. Fork it!
+2. Create your feature branch: `git checkout -b feature-name`
+3. Commit your changes: `git commit -am 'Your commit message'`
+4. Push to the branch: `git push origin feature-name`
+5. Submit a pull request
 
-- **Spread the Word**: Help us reach more enthusiasts by sharing the project with your network. The more creators and collectors we bring together, the stronger our community becomes.
-- **Feature Requests**: If you have ideas for new features or improvements, share them with us! We're excited to hear how we can enhance the marketplace to better serve the community.
-- **Code Contributions**: Developers can contribute by submitting pull requests. Whether it's fixing bugs, optimizing code, or adding new functionalities, your code contributions are invaluable.
-- **Bug Reports and Feedback**: If you encounter any issues or have suggestions for improvement, please open an issue on GitHub.
+## Show Your Support
 
+Love using Supersub? You can show your support by starring the [repo](https://github.com/codergon/Supersub).
 
-## Team
-Meet the creative minds who brought this project to life:
+Don't forget to [follow me on twitter](https://twitter.com/thealpha_knight).
 
-| **Name**          | **Role**                     | **GitHub**                                    |
-| ----------------- | ---------------------------- | --------------------------------------------- |
-| Olayinka Ganiyu   | Smart Contract Engineer      | [GitHub](https://github.com/Jaybee020)        |
-| Tobiloba Emmanuel | Smart Contract Engineer      | [GitHub](https://github.com/Tee-py)           |
-| Mofeoluwa Lijadu  | Backend Engineer             | [Github](https://github.com/scmofeoluwa)      |
-| Isaac Adewumi     | Backend Engineer             | [GitHub](https://github.com/prettyirrelevant) |
-| Kester Atakere    | Designer & Frontend Engineer | [GitHub](https://github.com/codergon)         |
-| Oreoluwa Adeleye  | Frontend Engineer            | [Github](https://github.com/Pauleye12)        |
+Thanks! - Kester A.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+---
+
+Thank you for choosing Supersub ✨

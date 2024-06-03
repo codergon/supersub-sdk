@@ -116,8 +116,6 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
     setProductDetails((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      // .then((res) => res?.data?.data?.product);
-
       const res = await fetch(
         `https://supersub.up.railway.app/api/products/${productId}`,
         {
@@ -125,13 +123,19 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
             "X-API-KEY": apiKey,
           },
         }
-      ).then((res) => res.json());
+      );
 
-      setProductDetails((prev) => ({ ...prev, data: res?.data?.product }));
+      if (!res.ok) throw new Error("Failed to fetch product details");
+
+      const data = await res.json();
+
+      setProductDetails({
+        error: false,
+        isLoading: false,
+        data: data?.data?.product,
+      });
     } catch (error) {
-      setProductDetails((prev) => ({ ...prev, error: true }));
-    } finally {
-      setProductDetails((prev) => ({ ...prev, isLoading: false }));
+      setProductDetails((prev) => ({ ...prev, error: true, isLoading: false }));
     }
   };
 
@@ -161,7 +165,7 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
     }
   };
 
-  const openModal = ({
+  const openSubscription = ({
     modal = "subscription-modal",
     productId,
     defaultPlanId,
@@ -200,7 +204,7 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
         productDetails,
 
         closeModal,
-        openModal,
+        openSubscription,
         getProductDetails,
       }}
     >
@@ -263,7 +267,7 @@ interface AcctContextType {
     error: boolean;
     isLoading: boolean;
   };
-  openModal: ({ modal, productId, apiKey }: IOpenModalArgs) => void;
+  openSubscription: ({ modal, productId, apiKey }: IOpenModalArgs) => void;
   getProductDetails: ({ productId, apiKey }: IGetProductArgs) => void;
 }
 

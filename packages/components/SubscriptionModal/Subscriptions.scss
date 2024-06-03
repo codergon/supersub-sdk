@@ -41,6 +41,38 @@ $border-28: 1px solid #282828;
 $border-2d: 1px solid #2d2d2d;
 $border-3: 1px solid #333;
 
+// Screen size mixins
+@mixin phone {
+  @media (max-width: 490px) {
+    @content;
+  }
+}
+@mixin tablet {
+  @media (max-width: 770px) {
+    @content;
+  }
+}
+@mixin laptop {
+  @media (max-width: 1068px) {
+    @content;
+  }
+}
+@mixin laptopSm {
+  @media (max-width: 990px) {
+    @content;
+  }
+}
+@mixin desktop {
+  @media (max-width: 1600px) {
+    @content;
+  }
+}
+@mixin desktopX {
+  @media (max-width: 1800px) {
+    @content;
+  }
+}
+
 // Flex mixins
 @mixin flex($dir: column, $jc: center, $ai: center, $gap: 10px) {
   display: flex;
@@ -217,15 +249,19 @@ $border-3: 1px solid #333;
 }
 
 .ReactModal__Content {
-  width: 100% !important;
+  width: 448px !important;
   padding: 20px !important;
   display: flex !important;
-  max-width: 448px !important;
+  max-width: 95% !important;
   border-radius: 14px !important;
   background: #1d1d1d !important;
-  box-sizing: border-box !important;
   flex-direction: column !important;
+  box-sizing: border-box !important;
   border: 2px solid #333 !important;
+
+  @include tablet {
+    padding: 14px !important;
+  }
 
   * {
     margin: 0;
