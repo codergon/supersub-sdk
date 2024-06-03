@@ -33,7 +33,7 @@
     "url": "https://github.com/codergon/supersub-sdk/issues"
   },
   "homepage": "https://github.com/codergon/supersub-sdk#readme",
-  "peerDependencies": {
+  "dependencies": {
     "@alchemy/aa-accounts": "3.13.0",
     "@alchemy/aa-alchemy": "3.13.0",
     "@alchemy/aa-core": "^3.12.3",
