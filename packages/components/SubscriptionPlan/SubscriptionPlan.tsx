@@ -1,13 +1,11 @@
 import React from "react";
 import { formatUnits } from "viem";
 import { SubscriptionPlanProps } from "./SubscriptionPlan.types";
+import { useSuperSub } from "../../providers";
 
-const ProductPlan = ({
-  plan,
-  token,
-  selectedPlan,
-  updateSelectedPlan,
-}: SubscriptionPlanProps) => {
+const ProductPlan = ({ plan, token }: SubscriptionPlanProps) => {
+  const { selectedPlan, updateSelectedPlan } = useSuperSub();
+
   const timeframes = {
     days: plan?.chargeInterval / 86400,
     weeks: plan?.chargeInterval / 604800,

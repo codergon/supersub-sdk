@@ -35,6 +35,7 @@ const customStyles = {
 // SUBSCRIPTION PLUGINS SETUP
 import PluginClient from "../contracts/subscriptionPlugin";
 import { SubscriptionModal } from "../components";
+import { toast } from "sonner";
 
 type IModals = "subscription-modal";
 
@@ -53,6 +54,31 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
   // **
   const [pluginClient, setPluginClient] = useState<PluginClient | null>(null);
 
+  // REQUEST DATA
+  const [reqData, setReqData] = useState<IOpenModalArgs>({
+    apiKey: "",
+    productId: undefined,
+    defaultPlanId: undefined,
+  });
+
+  const [productDetails, setProductDetails] = useState({
+    data: null,
+    error: false,
+    isLoading: false,
+  });
+  const [selectedPlan, updateSelectedPlan] = useState<number | undefined>(
+    reqData?.defaultPlanId ??
+      (productDetails?.data as any)?.plans[0].onchainReference
+  );
+
+  useEffect(() => {
+    if (selectedPlan) return;
+    updateSelectedPlan(
+      reqData?.defaultPlanId ??
+        (productDetails?.data as any)?.plans[0].onchainReference
+    );
+  }, [reqData.defaultPlanId, productDetails?.data]);
+
   // PRIVY HOOKS
   const { logout } = useLogout();
   const { wallets } = useWallets();
@@ -62,6 +88,30 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
     onOAuthLoginComplete: () => {
       showMfaEnrollmentModal();
     },
+    onComplete: async () => {
+      // subscribe to plan
+      try {
+        const userOpRes = await pluginClient?.subscribe(selectedPlan!, 0);
+        console.log(userOpRes);
+        toast.success(
+          `Subscribed to ${
+            (productDetails.data as any)?.name ?? "plan"
+          } successfully"`
+        );
+      } catch (error: any) {
+        toast.error(
+          "Failed to subscribe" +
+            (error?.details
+              ? " with code " + JSON.parse(error?.details)?.code
+              : ""),
+          {
+            description: error?.details
+              ? JSON.parse(error?.details)?.message
+              : undefined,
+          }
+        );
+      }
+    },
   });
 
   // COMPUTED PRIVY VALUES
@@ -70,13 +120,18 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
     (wallet) => wallet.walletClientType === "privy"
   );
 
-  // LOGIN USER
-  const userLogin = async () => {
-    if (!authenticated) {
-      login();
-    } else if (!isMfaEnabled) {
-      showMfaEnrollmentModal();
-    }
+  // REMOVE "I HAVE PASSKEY BUTTON"
+  const checkForPasskeyBtn = async () => {
+    if (!document.getElementById("privy-modal-content")) return;
+
+    const btns = document.querySelectorAll("#privy-dialog button");
+    console.log(btns);
+
+    btns?.forEach((btn) => {
+      if (btn.textContent === "I have a passkey") {
+        btn.remove();
+      }
+    });
   };
 
   // CREATE SMART WALLET
@@ -97,17 +152,6 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
   }, [embeddedWallet?.address]);
 
   // FETCH PRODUCT DETAILS
-  const [reqData, setReqData] = useState<IOpenModalArgs>({
-    apiKey: "",
-    productId: undefined,
-    defaultPlanId: undefined,
-  });
-
-  const [productDetails, setProductDetails] = useState({
-    data: null,
-    error: false,
-    isLoading: false,
-  });
 
   const getProductDetails = async ({
     apiKey = reqData.apiKey!,
@@ -143,16 +187,16 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
   // SUBSCRIPTION PLUGINS METHODS
   // **
 
-  const subscribeToPlan = async (planId: number) => {
-    // login then subscribe
+  // LOGIN THEN SUBSCRIBE
+  const subscribeToPlan = async () => {
     if (!authenticated) {
-      await userLogin();
+      login();
+      setTimeout(checkForPasskeyBtn, 120);
+    } else if (!isMfaEnabled) {
+      showMfaEnrollmentModal();
     }
-    console.log("subscribing to plan", planId);
 
-    // subscribe to plan
-    const userOpRes = await pluginClient?.subscribe(planId, 0);
-    console.log(userOpRes);
+    console.log("subscribing to plan", selectedPlan);
   };
 
   // CLOSE MODAL
@@ -193,8 +237,10 @@ const AcctProvider = ({ children }: AcctProviderProps) => {
         isSmartAccountReady,
         smartAddress: smartAccount?.address,
 
-        login: userLogin,
         subscribeToPlan,
+
+        selectedPlan,
+        updateSelectedPlan,
 
         //
         defaultPlanId: reqData.defaultPlanId,
@@ -253,11 +299,13 @@ interface AcctContextType {
   isSmartAccountReady: boolean;
   smartAddress: string | undefined;
 
-  login: () => void;
-  subscribeToPlan: (planId: number) => void;
+  subscribeToPlan: () => void;
 
   //
   defaultPlanId: number | undefined;
+
+  selectedPlan: number | undefined;
+  updateSelectedPlan: (selectedPlan: number) => void;
 
   // MODAL STATE
   activeModal: string;

@@ -6,20 +6,7 @@ import ProductPlan from "../SubscriptionPlan/SubscriptionPlan";
 import { CaretDoubleRight, XCircle } from "@phosphor-icons/react";
 
 const SubscriptionModal = () => {
-  const { productDetails, defaultPlanId, getProductDetails, subscribeToPlan } =
-    useSuperSub();
-
-  const [selectedPlan, setSelectedPlan] = useState(
-    defaultPlanId ?? productDetails?.data?.plans[0].onchainReference
-  );
-
-  const updateSelectedPlan = (planId: string) => {
-    setSelectedPlan(
-      productDetails?.data?.plans?.find(
-        (p: any) => p.onchainReference === planId
-      )?.onchainReference || ""
-    );
-  };
+  const { productDetails, getProductDetails, subscribeToPlan } = useSuperSub();
 
   const [loading, _] = useState(false);
 
@@ -91,9 +78,7 @@ const SubscriptionModal = () => {
               <ProductPlan
                 key={ind}
                 plan={plan}
-                selectedPlan={selectedPlan}
                 token={productDetails?.data?.token}
-                updateSelectedPlan={updateSelectedPlan}
               />
             );
           })}
@@ -103,7 +88,7 @@ const SubscriptionModal = () => {
       <div
         className={`base-btn ${loading ? "disabled" : ""}`}
         onClick={() => {
-          subscribeToPlan(selectedPlan);
+          subscribeToPlan();
         }}
       >
         <p>Subscribe to plan</p>

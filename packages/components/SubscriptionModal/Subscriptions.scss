@@ -34,6 +34,8 @@ $neutral-700: #777;
 $neutral-800: #888;
 $neutral-900: #999;
 
+$negative-500: #ff5c5c;
+
 $border-0: 1px solid #000;
 $border-1: 1px solid #111;
 $border-2: 1px solid #222;
@@ -503,5 +505,35 @@ body.modal-open {
   &__text {
     color: #ddd;
     font-size: 16px;
+  }
+}
+
+.toast-block {
+  li {
+    width: 391px;
+    color: $white;
+    font-size: 14px;
+    border-radius: 12px;
+    background-color: $tab-bg;
+    border: 2px solid $neutral-100;
+
+    &[data-type="error"] {
+      color: $negative-500;
+    }
+    &[data-type="success"] {
+      color: #16f19d;
+    }
+
+    [data-icon] {
+      width: 22px;
+      height: 22px;
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    [data-description] {
+      color: #aaa;
+    }
   }
 }
