@@ -1,0 +1,9 @@
+pages
+node_modules
+.next
+next-env.d.ts
+CONTRIBUTING.md
+data.tsx
+packages/components
+packages/providers
+.env
